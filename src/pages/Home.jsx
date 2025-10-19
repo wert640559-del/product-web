@@ -112,16 +112,28 @@ export default function Home() {
                     
                     <div className="categories-grid">
                         {categories.map(category => (
-                            <div key={category.id} className="category-card">
-                                <div className="category-icon">
-                                    <span>📁</span>
+                            <Link 
+                                key={category.id} 
+                                to={`/category/${category.id}`}
+                                className="category-card-link"
+                            >
+                                <div className="category-card">
+                                    <div className="category-icon">
+                                        <span>📁</span>
+                                    </div>
+                                    <h3 className="category-name">{category.name}</h3>
+                                    <p className="category-desc">
+                                        Jelajahi berbagai produk dalam kategori {category.name.toLowerCase()}
+                                    </p>
                                 </div>
-                                <h3 className="category-name">{category.name}</h3>
-                                <p className="category-desc">
-                                    Jelajahi berbagai produk dalam kategori {category.name.toLowerCase()}
-                                </p>
-                            </div>
+                            </Link>
                         ))}
+                    </div>
+
+                    <div className="section-cta">
+                        <Link to="/categories" className="view-all-btn">
+                            Lihat Semua Kategori
+                        </Link>
                     </div>
                 </div>
             </section>

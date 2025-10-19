@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Settings() {
     const [settings, setSettings] = useState({
@@ -18,6 +18,61 @@ export default function Settings() {
             timezone: 'Asia/Jakarta'
         }
     });
+
+    // Effect untuk mengubah tema
+    useEffect(() => {
+        const root = document.documentElement;
+        
+        if (settings.preferences.theme === 'dark') {
+            root.style.setProperty('--bg-primary', '#1a1a1a');
+            root.style.setProperty('--bg-secondary', '#2d2d2d');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-secondary', '#cccccc');
+            root.style.setProperty('--border-color', '#404040');
+            document.body.style.backgroundColor = '#1a1a1a';
+            document.body.style.color = '#ffffff';
+        } else if (settings.preferences.theme === 'auto') {
+            // Deteksi preferensi sistem
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDarkMode) {
+                root.style.setProperty('--bg-primary', '#1a1a1a');
+                root.style.setProperty('--bg-secondary', '#2d2d2d');
+                root.style.setProperty('--text-primary', '#ffffff');
+                root.style.setProperty('--text-secondary', '#cccccc');
+                root.style.setProperty('--border-color', '#404040');
+                document.body.style.backgroundColor = '#1a1a1a';
+                document.body.style.color = '#ffffff';
+            } else {
+                resetToLightTheme();
+            }
+        } else {
+            resetToLightTheme();
+        }
+
+        function resetToLightTheme() {
+            root.style.setProperty('--bg-primary', '#F6F1E9');
+            root.style.setProperty('--bg-secondary', '#ffffff');
+            root.style.setProperty('--text-primary', '#4F200D');
+            root.style.setProperty('--text-secondary', '#666666');
+            root.style.setProperty('--border-color', '#FFD93D');
+            document.body.style.backgroundColor = '#F6F1E9';
+            document.body.style.color = '#4F200D';
+        }
+    }, [settings.preferences.theme]);
+
+    // Effect untuk mendeteksi perubahan tema sistem
+    useEffect(() => {
+        if (settings.preferences.theme === 'auto') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = (e) => {
+                // Trigger re-render ketika preferensi sistem berubah
+                setSettings(prev => ({ ...prev }));
+            };
+
+            mediaQuery.addEventListener('change', handleChange);
+            return () => mediaQuery.removeEventListener('change', handleChange);
+        }
+    }, [settings.preferences.theme]);
 
     const handleNotificationChange = (key) => {
         setSettings(prev => ({
@@ -51,15 +106,41 @@ export default function Settings() {
 
     const handleSaveSettings = (e) => {
         e.preventDefault();
+        // Simpan ke localStorage
+        localStorage.setItem('userSettings', JSON.stringify(settings));
         alert('Pengaturan berhasil disimpan!');
     };
 
-    if (settings.preferences.theme === 'light') {
-    document.body.style.backgroundColor = 'white';
-} else {
-    document.body.style.backgroundColor = 'black';
-}
+    const handleResetSettings = () => {
+        const defaultSettings = {
+            notifications: {
+                email: true,
+                push: false,
+                sms: true
+            },
+            privacy: {
+                profileVisibility: 'public',
+                searchVisibility: true,
+                dataSharing: false
+            },
+            preferences: {
+                language: 'id',
+                theme: 'light',
+                timezone: 'Asia/Jakarta'
+            }
+        };
+        setSettings(defaultSettings);
+        localStorage.removeItem('userSettings');
+        alert('Pengaturan direset ke default!');
+    };
 
+    // Load settings from localStorage on component mount
+    useEffect(() => {
+        const savedSettings = localStorage.getItem('userSettings');
+        if (savedSettings) {
+            setSettings(JSON.parse(savedSettings));
+        }
+    }, []);
 
     return (
         <div className="settings-container">
@@ -244,7 +325,7 @@ export default function Settings() {
                     <button type="submit" className="save-settings-btn">
                         Simpan Pengaturan
                     </button>
-                    <button type="button" className="reset-settings-btn">
+                    <button type="button" className="reset-settings-btn" onClick={handleResetSettings}>
                         Reset ke Default
                     </button>
                 </div>

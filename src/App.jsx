@@ -9,6 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import "./App.css";
+import CategoriesPage from "./pages/CategoriesPage";
+import CategoryProducts from "./pages/CategoryProducts";
 
 export default function App() {
     return (
@@ -65,6 +67,8 @@ export default function App() {
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/settings" element={<Settings/>}/>
                     <Route path="/contact" element={<Contact />}/>
+                    <Route path="/category/:categoryId" element={<CategoryProducts />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
                 </Routes>
             </main>
         </div>
