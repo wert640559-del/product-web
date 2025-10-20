@@ -148,16 +148,16 @@ export default function About() {
                                     <strong>Asal:</strong> Riau, Indonesia
                                 </div>
                                 <div className="detail-item">
-                                    <strong>Spesialisasi:</strong> Web Development
+                                    <strong>Spesialisasi:</strong> Full-Stack Development
                                 </div>
                                 <div className="detail-item">
-                                    <strong>Pengalaman:</strong> 2+ Bulan 🗿
+                                    <strong>Pengalaman:</strong> 5+ Tahun
                                 </div>
                             </div>
                         </div>
                         <div className="founder-image">
                             <img 
-                                src="Harits.JPG"
+                                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
                                 alt="Muhammad Harits - Founder"
                                 className="founder-img"
                             />
