@@ -1,59 +1,83 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function Contact() {
     const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if redirected from success page
+  React.useEffect(() => {
+    if (location.state?.fromSuccess) {
+      alert('Selamat datang kembali dari halaman sukses!');
+    }
+    if (location.state?.autoRedirect) {
+      alert('Anda diarahkan otomatis dari halaman sukses!');
+    }
+    if (location.state?.newMessage) {
+      setFormData({
         name: '',
         email: '',
         subject: '',
         message: ''
+      });
+    }
+  }, [location]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulasi pengiriman form
+    setTimeout(() => {
+      setIsSubmitting(false);
+      
+      // PROGRAMMATIC NAVIGATION: Redirect ke halaman sukses setelah form submission
+      navigate('/contact-success', { 
+        state: { 
+          formData: formData,
+          message: `Pesan dari ${formData.name} (${formData.email}) berhasil dikirim.`,
+          timestamp: new Date().toLocaleString('id-ID')
+        }
+      });
+    }, 2000);
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+  const handleReset = () => {
+    // PROGRAMMATIC NAVIGATION: Reset form dan refresh state
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    });
+    
+    // Navigasi ke halaman yang sama untuk reset state
+    navigate('/contact', { 
+      replace: true,
+      state: { formReset: true }
+    });
+  };
 
-        // Format pesan untuk WhatsApp
-        const whatsappMessage = `
-Halo, saya ${formData.name}!
-
-*Subjek:* ${formData.subject}
-*Email:* ${formData.email}
-
-*Pesan:*
-${formData.message}
-
-Saya mengharapkan balasan dari Anda. Terima kasih!
-        `.trim();
-
-        // Encode message untuk URL
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        const phoneNumber = '6283132212944'; // Ganti dengan nomor WhatsApp bisnis Anda
-        
-        // Redirect ke WhatsApp
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-        
-        // Simulasi loading sebentar sebelum redirect
-        setTimeout(() => {
-            window.open(whatsappUrl, '_blank');
-            setIsSubmitting(false);
-            
-            // Reset form
-            setFormData({
-                name: '',
-                email: '',
-                subject: '',
-                message: ''
-            });
-        }, 1000);
-    };
+  const handleQuickNavigation = (path) => {
+    // PROGRAMMATIC NAVIGATION: Quick navigation ke halaman lain
+    navigate(path, {
+      state: { fromContact: true, quickNav: true }
+    });
+  };
 
     const contactMethods = [
         {
@@ -80,8 +104,8 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
         {
             icon: '🏢',
             title: 'Kantor',
-            detail: 'Jl. Jalan No. 123',
-            description: 'Kota, Indonesia',
+            detail: 'Jl. Contoh No. 123',
+            description: 'Riau, Indonesia',
             link: 'https://maps.google.com'
         }
     ];
@@ -106,14 +130,39 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
     ];
 
     return (
-        <div className="contact-container">
+         <div className="contact-container">
             {/* Hero Section */}
             <section className="contact-hero">
                 <div className="container">
-                    <h1 className="contact-hero-title">Hubungi Kami</h1>
-                    <p className="contact-hero-subtitle">
-                        Kami siap membantu Anda. Hubungi kami melalui berbagai cara yang tersedia.
-                    </p>
+                <h1 className="contact-hero-title">Hubungi Kami</h1>
+                <p className="contact-hero-subtitle">
+                    Kami siap membantu Anda. Hubungi kami melalui berbagai cara yang tersedia.
+                </p>
+                
+                {/* Quick Navigation Demo */}
+                <div className="quick-nav-demo">
+                    <h3>Demo Navigasi Cepat:</h3>
+                    <div className="quick-nav-buttons">
+                    <button 
+                        onClick={() => handleQuickNavigation('/products')}
+                        className="quick-nav-btn"
+                    >
+                        Lihat Produk
+                    </button>
+                    <button 
+                        onClick={() => handleQuickNavigation('/about')}
+                        className="quick-nav-btn"
+                    >
+                        Tentang Kami
+                    </button>
+                    <button 
+                        onClick={() => handleQuickNavigation('/')}
+                        className="quick-nav-btn"
+                    >
+                        Beranda
+                    </button>
+                    </div>
+                </div>
                 </div>
             </section>
 
@@ -148,91 +197,91 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
                     <div className="contact-content">
                         {/* Contact Form */}
                         <div className="contact-form-section">
-                            <h2>Kirim Pesan via WhatsApp</h2>
-                            <p className="whatsapp-notice">
-                                📱 Form ini akan langsung mengarahkan Anda ke WhatsApp dengan pesan yang sudah terisi otomatis
-                            </p>
+                        <h2>Kirim Pesan</h2>
+                        <p>Isi form berikut dan kami akan menghubungi Anda secepatnya.</p>
+                        
+                        <form className="contact-form" onSubmit={handleSubmit}>
+                            <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="name">Nama Lengkap *</label>
+                                <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                                className="form-input"
+                                placeholder="Masukkan nama lengkap"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="email">Email *</label>
+                                <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                className="form-input"
+                                placeholder="Masukkan alamat email"
+                                />
+                            </div>
+                            </div>
                             
-                            <form className="contact-form" onSubmit={handleSubmit}>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label htmlFor="name">Nama Lengkap *</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                            className="form-input"
-                                            placeholder="Masukkan nama lengkap"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="email">Email *</label>
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                            className="form-input"
-                                            placeholder="Masukkan alamat email"
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="form-group">
-                                    <label htmlFor="subject">Subjek *</label>
-                                    <input
-                                        type="text"
-                                        id="subject"
-                                        name="subject"
-                                        value={formData.subject}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-input"
-                                        placeholder="Masukkan subjek pesan"
-                                    />
-                                </div>
-                                
-                                <div className="form-group">
-                                    <label htmlFor="message">Pesan *</label>
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-textarea"
-                                        rows="6"
-                                        placeholder="Tulis pesan Anda di sini..."
-                                    ></textarea>
-                                </div>
-                                
-                                <button 
-                                    type="submit" 
-                                    className="submit-btn whatsapp-btn"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <div className="loading-spinner"></div>
-                                            Membuka WhatsApp...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="whatsapp-icon">💬</span>
-                                            Kirim via WhatsApp
-                                        </>
-                                    )}
-                                </button>
-
-                                <div className="form-note">
-                                    <p>📝 Pastikan Anda sudah menginstal WhatsApp di perangkat Anda</p>
-                                </div>
-                            </form>
+                            <div className="form-group">
+                            <label htmlFor="subject">Subjek *</label>
+                            <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                value={formData.subject}
+                                onChange={handleChange}
+                                required
+                                className="form-input"
+                                placeholder="Masukkan subjek pesan"
+                            />
+                            </div>
+                            
+                            <div className="form-group">
+                            <label htmlFor="message">Pesan *</label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                value={formData.message}
+                                onChange={handleChange}
+                                required
+                                className="form-textarea"
+                                rows="6"
+                                placeholder="Tulis pesan Anda di sini..."
+                            ></textarea>
+                            </div>
+                            
+                            <div className="form-action-buttons">
+                            <button 
+                                type="submit" 
+                                className="submit-btn"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                <>
+                                    <div className="loading-spinner"></div>
+                                    Mengirim...
+                                </>
+                                ) : 'Kirim Pesan'}
+                            </button>
+                            
+                            <button 
+                                type="button" 
+                                className="reset-btn"
+                                onClick={handleReset}
+                                disabled={isSubmitting}
+                            >
+                                Reset Form
+                            </button>
+                            </div>
+                        </form>
                         </div>
 
                         {/* Contact Info */}
@@ -244,7 +293,7 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
                                     <div className="info-icon">📍</div>
                                     <div className="info-content">
                                         <h4>Alamat Kantor</h4>
-                                        <p>Jl. Jalan No. 123<br />Kota, Province 28131<br />Indonesia</p>
+                                        <p>Jl. Contoh No. 123<br />Pekanbaru, Riau 28131<br />Indonesia</p>
                                     </div>
                                 </div>
                                 
@@ -269,10 +318,10 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
                                     <div className="info-content">
                                         <h4>Sosial Media</h4>
                                         <div className="social-links">
-                                            <a href="https://web.facebook.com/" className="social-link">Facebook</a>
-                                            <a href="https://www.instagram.com/muharits_/" className="social-link">Instagram</a>
-                                            <a href="https://x.com/" className="social-link">Twitter</a>
-                                            <a href="https://www.linkedin.com/" className="social-link">LinkedIn</a>
+                                            <a href="#" className="social-link">Facebook</a>
+                                            <a href="#" className="social-link">Instagram</a>
+                                            <a href="#" className="social-link">Twitter</a>
+                                            <a href="#" className="social-link">LinkedIn</a>
                                         </div>
                                     </div>
                                 </div>
@@ -300,17 +349,16 @@ Saya mengharapkan balasan dari Anda. Terima kasih!
                 <div className="container">
                     <h2>Lokasi Kami 🗺️</h2>                    
                     <div className="map-placeholder">
-                        <iframe 
-                            className="map-content"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d724.0261218669477!2d110.29541442083355!3d-7.996405218665216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a57d3554e3c31%3A0xf12f0cd502f34b39!2sPondok%20IT%20Indonesia!5e0!3m2!1sid!2sid!4v1760779971036!5m2!1sid!2sid"
-                            width="100%"
-                            height="600px"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            title="Google Maps Pondok IT Indonesia"
-                        ></iframe>
+                            <iframe className="map-content"
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d724.0261218669477!2d110.29541442083355!3d-7.996405218665216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a57d3554e3c31%3A0xf12f0cd502f34b39!2sPondok%20IT%20Indonesia!5e0!3m2!1sid!2sid!4v1760779971036!5m2!1sid!2sid"
+                                    width="100%"
+                                    height="600px"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Google Maps Pondok IT Indonesia"
+                                ></iframe>
                     </div>
                 </div>
             </section>

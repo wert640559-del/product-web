@@ -55,6 +55,9 @@ export default function Home() {
                         <Link to="/about" className="cta-button secondary">
                             Tentang Kami
                         </Link>
+                        <Link to="/product-search" className="cta-button secondary">
+                            Cari Produk
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -112,28 +115,16 @@ export default function Home() {
                     
                     <div className="categories-grid">
                         {categories.map(category => (
-                            <Link 
-                                key={category.id} 
-                                to={`/category/${category.id}`}
-                                className="category-card-link"
-                            >
-                                <div className="category-card">
-                                    <div className="category-icon">
-                                        <span>📁</span>
-                                    </div>
-                                    <h3 className="category-name">{category.name}</h3>
-                                    <p className="category-desc">
-                                        Jelajahi berbagai produk dalam kategori {category.name.toLowerCase()}
-                                    </p>
+                            <div key={category.id} className="category-card">
+                                <div className="category-icon">
+                                    <span>📁</span>
                                 </div>
-                            </Link>
+                                <h3 className="category-name">{category.name}</h3>
+                                <p className="category-desc">
+                                    Jelajahi berbagai produk dalam kategori {category.name.toLowerCase()}
+                                </p>
+                            </div>
                         ))}
-                    </div>
-
-                    <div className="section-cta">
-                        <Link to="/categories" className="view-all-btn">
-                            Lihat Semua Kategori
-                        </Link>
                     </div>
                 </div>
             </section>
@@ -176,6 +167,7 @@ export default function Home() {
                         <Link to="/contact" className="cta-button secondary large">
                             Hubungi Kami
                         </Link>
+                        
                     </div>
                 </div>
             </section>
