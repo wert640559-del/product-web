@@ -94,6 +94,8 @@ export default function ProductDetail() {
               </button>
             </div>
 
+            <br />
+
             <Link to="/products" className="back-link">
               ← Kembali ke Daftar Produk
             </Link>

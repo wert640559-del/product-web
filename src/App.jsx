@@ -64,8 +64,8 @@ export default function App() {
           {/* Logo/Brand */}
           <div className="nav-brand">
             <NavLink to="/" className="brand-link">
-              <div className="brand-logo">🛍️</div>
-              <span className="brand-text">E-Commerce</span>
+              <img src="icon.png" alt="" width="30px"/>
+              <span className="brand-text">TokoSedia</span>
             </NavLink>
           </div>
 
@@ -94,7 +94,6 @@ export default function App() {
               <NavLink to="/cart" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
                 <div className="cart-nav-item">
                   <span className="cart-icon">🛒</span>
-                  <span className="cart-text">Keranjang</span>
                 </div>
               </NavLink>
 

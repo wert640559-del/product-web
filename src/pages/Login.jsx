@@ -5,6 +5,7 @@ export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -13,16 +14,26 @@ export default function Login({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
+
+    // Validasi input
+    if (!username.trim() || !password.trim()) {
+      setError('Username dan password harus diisi!');
+      setIsLoading(false);
+      return;
+    }
 
     // Simulasi proses login dengan timeout
     setTimeout(() => {
-      if (username && password) {
+      // Validasi credentials khusus
+      if (username === 'admin' && password === 'password123') {
         // Generate random token untuk simulasi
         const authToken = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
         const userData = { 
           name: 'Muhammad Harits', 
-          username: username 
+          username: username,
+          role: 'Administrator'
         };
         localStorage.setItem('authToken', authToken);
         localStorage.setItem('user', JSON.stringify(userData));
@@ -42,15 +53,14 @@ export default function Login({ onLogin }) {
           }
         });
       } else {
-        alert('Username dan password harus diisi!');
+        setError('Username atau password salah!');
       }
       setIsLoading(false);
     }, 1500);
-  };
 
-  const handleDemoLogin = () => {
-    setUsername('admin');
-    setPassword('password123');
+    setUsername('');
+    setPassword('');
+    setError('');
   };
 
   const handleCancel = () => {
@@ -69,6 +79,10 @@ export default function Login({ onLogin }) {
     });
   };
 
+  const clearForm = () => {
+    
+  };
+
   return (
     <div className="page-container" style={{ paddingTop: '2rem' }}>
       <div className="login-container">
@@ -78,6 +92,14 @@ export default function Login({ onLogin }) {
             <p>Masuk ke akun Anda</p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="login-error">
+              <div className="error-icon">⚠️</div>
+              <div className="error-message">{error}</div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <label htmlFor="username">Username</label>
@@ -85,10 +107,14 @@ export default function Login({ onLogin }) {
                 type="text"
                 id="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError('');
+                }}
                 placeholder="Masukkan username"
                 className="form-input"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -98,10 +124,14 @@ export default function Login({ onLogin }) {
                 type="password"
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
                 placeholder="Masukkan password"
                 className="form-input"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -118,14 +148,6 @@ export default function Login({ onLogin }) {
                   </>
                 ) : 'Login'}
               </button>
-
-              <button 
-                type="button" 
-                className="demo-btn"
-                onClick={handleDemoLogin}
-              >
-                Isi Demo Credentials
-              </button>
             </div>
           </form>
 
@@ -134,6 +156,7 @@ export default function Login({ onLogin }) {
               type="button" 
               className="secondary-btn"
               onClick={handleCancel}
+              disabled={isLoading}
             >
               Kembali
             </button>
@@ -141,16 +164,17 @@ export default function Login({ onLogin }) {
               type="button" 
               className="secondary-btn"
               onClick={handleGoToHome}
+              disabled={isLoading}
             >
               Ke Beranda
             </button>
           </div>
 
           <div className="login-info">
-            <p><strong>Demo credentials:</strong></p>
-            <p>Username: admin</p>
-            <p>Password: password123</p>
-            <p className="note">*Isi form dan klik Login</p>
+            <p><strong>Testing Login:</strong></p>
+            <p>Username: <strong>admin</strong></p>
+            <p>Password: <strong>password123</strong></p>
+            <p className="note">*Hanya akun di atas yang bisa login</p>
           </div>
         </div>
       </div>

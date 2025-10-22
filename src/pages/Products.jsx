@@ -80,7 +80,7 @@ function ProductsContent() {
     return (
         <div className="products-container">
             <div className="products-header">
-                <h1>🛍️ Semua Produk</h1>
+                <h1><img src="icon.png" width="50px" /> Semua Produk</h1>
                 <p>Temukan produk terbaik untuk kebutuhan Anda</p>
             </div>
 

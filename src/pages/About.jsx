@@ -65,7 +65,7 @@ export default function About() {
                             </p>
                             <div className="mission-values">
                                 <div className="value-item">
-                                    <h4>🛍️ Inovasi</h4>
+                                    <h4><img src="icon.png" width="20px" /> Inovasi</h4>
                                     <p>Terus berinovasi dalam menyajikan produk-produk terbaik</p>
                                 </div>
                                 <div className="value-item">
@@ -157,7 +157,7 @@ export default function About() {
                         </div>
                         <div className="founder-image">
                             <img 
-                                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
+                                src="6.JPG" 
                                 alt="Muhammad Harits - Founder"
                                 className="founder-img"
                             />

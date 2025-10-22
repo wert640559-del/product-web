@@ -8,6 +8,7 @@ export default function ProductSearch() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Get query parameters
   const category = searchParams.get('category') || 'all';
@@ -120,10 +121,12 @@ export default function ProductSearch() {
 
   const handleCategoryChange = (newCategory) => {
     updateSearchParams({ category: newCategory });
+    setIsFilterOpen(false);
   };
 
   const handleSortChange = (newSort) => {
     updateSearchParams({ sort: newSort });
+    setIsFilterOpen(false);
   };
 
   const handlePriceFilter = (min, max) => {
@@ -145,7 +148,121 @@ export default function ProductSearch() {
   const clearAllFilters = () => {
     setSearchTerm('');
     setSearchParams(new URLSearchParams());
+    setIsFilterOpen(false);
   };
+
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
+  const closeFilter = () => {
+    setIsFilterOpen(false);
+  };
+
+  // Filter Component untuk reuse
+  const FilterContent = () => (
+    <>
+      <div className="filter-section">
+        <h3>Kategori</h3>
+        <div className="filter-options">
+          <button
+            className={`filter-option ${category === 'all' ? 'active' : ''}`}
+            onClick={() => handleCategoryChange('all')}
+          >
+            Semua Kategori
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              className={`filter-option ${category === cat.name.toLowerCase() ? 'active' : ''}`}
+              onClick={() => handleCategoryChange(cat.name.toLowerCase())}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter-section">
+        <h3>Urutkan Berdasarkan</h3>
+        <div className="filter-options">
+          <button
+            className={`filter-option ${sortBy === 'name' ? 'active' : ''}`}
+            onClick={() => handleSortChange('name')}
+          >
+            Nama A-Z
+          </button>
+          <button
+            className={`filter-option ${sortBy === 'price-low' ? 'active' : ''}`}
+            onClick={() => handleSortChange('price-low')}
+          >
+            Harga Terendah
+          </button>
+          <button
+            className={`filter-option ${sortBy === 'price-high' ? 'active' : ''}`}
+            onClick={() => handleSortChange('price-high')}
+          >
+            Harga Tertinggi
+          </button>
+          <button
+            className={`filter-option ${sortBy === 'newest' ? 'active' : ''}`}
+            onClick={() => handleSortChange('newest')}
+          >
+            Terbaru
+          </button>
+          <button
+            className={`filter-option ${sortBy === 'oldest' ? 'active' : ''}`}
+            onClick={() => handleSortChange('oldest')}
+          >
+            Terlama
+          </button>
+        </div>
+      </div>
+
+      <div className="filter-section">
+        <h3>Rentang Harga</h3>
+        <div className="price-filter">
+          <div className="price-inputs">
+            <input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={(e) => handlePriceFilter(e.target.value, maxPrice)}
+              className="price-input"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => handlePriceFilter(minPrice, e.target.value)}
+              className="price-input"
+            />
+          </div>
+          <button 
+            onClick={() => handlePriceFilter('', '')}
+            className="clear-price-btn"
+          >
+            Reset Harga
+          </button>
+        </div>
+      </div>
+
+      <div className="query-info">
+        <h4>Parameter URL Saat Ini:</h4>
+        <div className="query-params">
+          {Array.from(searchParams.entries()).map(([key, value]) => (
+            <div key={key} className="query-param">
+              <strong>{key}:</strong> {value}
+            </div>
+          ))}
+          {searchParams.size === 0 && (
+            <div className="no-params">Tidak ada parameter</div>
+          )}
+        </div>
+      </div>
+    </>
+  );
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -182,6 +299,12 @@ export default function ProductSearch() {
             />
             <span className="search-icon">🔍</span>
           </div>
+
+          {/* Filter Toggle Button - Mobile Only */}
+          <button className="filter-toggle-btn" onClick={toggleFilter}>
+            <span>🔧</span>
+            Filter Produk
+          </button>
 
           {/* Active Filters Display */}
           <div className="active-filters">
@@ -228,108 +351,9 @@ export default function ProductSearch() {
 
         {/* Main Content */}
         <div className="search-content">
-          {/* Sidebar Filters */}
+          {/* Desktop Sidebar Filters */}
           <div className="filters-sidebar">
-            <div className="filter-section">
-              <h3>Kategori</h3>
-              <div className="filter-options">
-                <button
-                  className={`filter-option ${category === 'all' ? 'active' : ''}`}
-                  onClick={() => handleCategoryChange('all')}
-                >
-                  Semua Kategori
-                </button>
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    className={`filter-option ${category === cat.name.toLowerCase() ? 'active' : ''}`}
-                    onClick={() => handleCategoryChange(cat.name.toLowerCase())}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="filter-section">
-              <h3>Urutkan Berdasarkan</h3>
-              <div className="filter-options">
-                <button
-                  className={`filter-option ${sortBy === 'name' ? 'active' : ''}`}
-                  onClick={() => handleSortChange('name')}
-                >
-                  Nama A-Z
-                </button>
-                <button
-                  className={`filter-option ${sortBy === 'price-low' ? 'active' : ''}`}
-                  onClick={() => handleSortChange('price-low')}
-                >
-                  Harga Terendah
-                </button>
-                <button
-                  className={`filter-option ${sortBy === 'price-high' ? 'active' : ''}`}
-                  onClick={() => handleSortChange('price-high')}
-                >
-                  Harga Tertinggi
-                </button>
-                <button
-                  className={`filter-option ${sortBy === 'newest' ? 'active' : ''}`}
-                  onClick={() => handleSortChange('newest')}
-                >
-                  Terbaru
-                </button>
-                <button
-                  className={`filter-option ${sortBy === 'oldest' ? 'active' : ''}`}
-                  onClick={() => handleSortChange('oldest')}
-                >
-                  Terlama
-                </button>
-              </div>
-            </div>
-
-            <div className="filter-section">
-              <h3>Rentang Harga</h3>
-              <div className="price-filter">
-                <div className="price-inputs">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={minPrice}
-                    onChange={(e) => handlePriceFilter(e.target.value, maxPrice)}
-                    className="price-input"
-                  />
-                  <span>-</span>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={maxPrice}
-                    onChange={(e) => handlePriceFilter(minPrice, e.target.value)}
-                    className="price-input"
-                  />
-                </div>
-                <button 
-                  onClick={() => handlePriceFilter('', '')}
-                  className="clear-price-btn"
-                >
-                  Reset Harga
-                </button>
-              </div>
-            </div>
-
-            {/* Query Parameters Info */}
-            <div className="query-info">
-              <h4>Parameter URL Saat Ini:</h4>
-              <div className="query-params">
-                {Array.from(searchParams.entries()).map(([key, value]) => (
-                  <div key={key} className="query-param">
-                    <strong>{key}:</strong> {value}
-                  </div>
-                ))}
-                {searchParams.size === 0 && (
-                  <div className="no-params">Tidak ada parameter</div>
-                )}
-              </div>
-            </div>
+            <FilterContent />
           </div>
 
           {/* Products Grid */}
@@ -413,6 +437,17 @@ export default function ProductSearch() {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Mobile Filter Overlay */}
+        <div className={`mobile-filter-overlay ${isFilterOpen ? 'open' : ''}`} onClick={closeFilter}>
+          <div className={`mobile-filter-sidebar ${isFilterOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-filter-header">
+              <h3>Filter Produk</h3>
+              <button className="close-filter-btn" onClick={closeFilter}>×</button>
+            </div>
+            <FilterContent />
           </div>
         </div>
 

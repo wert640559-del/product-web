@@ -22,6 +22,7 @@ import './styles/pages/NotFound.css'
 import './styles/pages/ProductSearch.css'
 import './styles/pages/Cart.css'
 import './styles/pages/Checkout.css'
+import './styles/pages/CheckoutSuccess.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

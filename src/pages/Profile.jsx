@@ -14,8 +14,8 @@ export default function Profile() {
                     name: 'Muhammad Harits',
                     email: 'harits@example.com',
                     role: 'Administrator',
-                    joinDate: '2023-01-15',
-                    avatar: 'https://i.pravatar.cc/150?img=1',
+                    joinDate: '2025-08-01',
+                    avatar: '1.jpg',
                     phone: '+62 812-3456-7890',
                     location: 'Riau, Indonesia',
                     bio: 'Full-stack developer dengan passion dalam membangun aplikasi web yang scalable dan user-friendly.'
@@ -73,7 +73,7 @@ export default function Profile() {
                         </div>
                         <div className="profile-stat">
                             <span className="stat-number">3</span>
-                            <span className="stat-label">Tahun</span>
+                            <span className="stat-label">Bulan</span>
                         </div>
                     </div>
                 </div>
