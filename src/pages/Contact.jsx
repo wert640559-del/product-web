@@ -13,22 +13,22 @@ export default function Contact() {
   const location = useLocation();
 
   // Check if redirected from success page
-  React.useEffect(() => {
-    if (location.state?.fromSuccess) {
-      alert('Selamat datang kembali dari halaman sukses!');
-    }
-    if (location.state?.autoRedirect) {
-      alert('Anda diarahkan otomatis dari halaman sukses!');
-    }
-    if (location.state?.newMessage) {
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-    }
-  }, [location]);
+    useEffect(() => {
+        if (location.state?.fromSuccess) {
+            alert('Selamat datang kembali dari halaman sukses!');
+        }
+        if (location.state?.autoRedirect) {
+            alert('Anda diarahkan otomatis dari halaman sukses!');
+        }
+        if (location.state?.newMessage) {
+            setFormData({
+                name: '',
+                email: '',
+                subject: '',
+                message: ''
+            });
+        }
+    }, [location]);
 
   const handleChange = (e) => {
     setFormData({

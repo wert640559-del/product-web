@@ -54,11 +54,6 @@ export default function Settings() {
         alert('Pengaturan berhasil disimpan!');
     };
 
-    if (settings.preferences.theme === 'light') {
-    document.body.style.backgroundColor = 'white';
-} else {
-    document.body.style.backgroundColor = 'black';
-}
 
 
     return (

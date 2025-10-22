@@ -12,9 +12,12 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Logout from "./components/Logout";
-import "./App.css";
 import ContactSuccess from "./components/ContactSuccess";
 import ProductSearch from "./pages/ProductSearch";
+import Checkout from "./pages/Checkout";
+import ErrorBoundary from "./components/ErrorBoundary";
+import Cart from "./pages/Cart";
+import CheckoutSuccess from "./pages/CheckoutSuccess"; // Tambahkan import ini
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -81,9 +84,20 @@ export default function App() {
               <NavLink to="/contact" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
                 Kontak
               </NavLink>
+              <NavLink to="/product-search" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
+                Cari Produk
+              </NavLink>
             </div>
 
             <div className="nav-links-secondary">
+              {/* Cart Icon - Tampilkan untuk semua pengguna */}
+              <NavLink to="/cart" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
+                <div className="cart-nav-item">
+                  <span className="cart-icon">🛒</span>
+                  <span className="cart-text">Keranjang</span>
+                </div>
+              </NavLink>
+
               {isLoggedIn ? (
                 <div className="user-menu">
                   <NavLink to="/dashboard" className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
@@ -101,6 +115,9 @@ export default function App() {
                       </NavLink>
                       <NavLink to="/settings" className="dropdown-link">
                         Pengaturan
+                      </NavLink>
+                      <NavLink to="/checkout" className="dropdown-link">
+                        Checkout
                       </NavLink>
                       <div className="dropdown-divider"></div>
                       <Logout onLogout={handleLogout} />
@@ -159,8 +176,17 @@ export default function App() {
             </NavLink>
             <NavLink 
               to="/product-search" 
-              className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}>
+              className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               Cari Produk
+            </NavLink>
+            <NavLink 
+              to="/cart" 
+              className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🛒 Keranjang
             </NavLink>
 
             {isLoggedIn ? (
@@ -187,6 +213,13 @@ export default function App() {
                 >
                   Pengaturan
                 </NavLink>
+                <NavLink 
+                  to="/checkout" 
+                  className={({isActive}) => (isActive ? 'nav-link active' : 'nav-link')}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Checkout
+                </NavLink>
                 <div className="mobile-logout">
                   <Logout onLogout={handleLogout} />
                 </div>
@@ -205,36 +238,62 @@ export default function App() {
       </nav>
 
       <main>
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/about" element={<About/>}/>
-          <Route path="/products" element={<Products/>}/>
-          <Route path="/products/:productId" element={<ProductDetail/>}/>
-          <Route path="/login" element={<Login onLogin={handleLogin} />}/>
-          <Route path="/contact" element={<Contact />}/>
-          
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <Dashboard />
-            </PrivateRoute>
-          }/>
-          <Route path="/profile" element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <Profile />
-            </PrivateRoute>
-          }/>
-          <Route path="/settings" element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <Settings />
-            </PrivateRoute>
-          }/>
-          
-          {/* 404 Route */}
-          <Route path="*" element={<NotFound />} />
-          <Route path="/contact-success" element={<ContactSuccess />}/>
-          <Route path="/product-search" element={<ProductSearch />}/>
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/about" element={<About/>}/>
+            <Route path="/products" element={<Products/>}/>
+            <Route path="/products/:productId" element={<ProductDetail/>}/>
+            <Route path="/login" element={<Login onLogin={handleLogin} />}/>
+            <Route path="/contact" element={<Contact />}/>
+            <Route path="/contact-success" element={<ContactSuccess />}/>
+            <Route path="/product-search" element={<ProductSearch />}/>
+            
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={
+              <PrivateRoute isLoggedIn={isLoggedIn}>
+                <Dashboard />
+              </PrivateRoute>
+            }/>
+            <Route path="/profile" element={
+              <PrivateRoute isLoggedIn={isLoggedIn}>
+                <Profile />
+              </PrivateRoute>
+            }/>
+            <Route path="/settings" element={
+              <PrivateRoute isLoggedIn={isLoggedIn}>
+                <Settings />
+              </PrivateRoute>
+            }/>
+            <Route 
+              path="/checkout" 
+              element={
+                <PrivateRoute isLoggedIn={isLoggedIn}>
+                  <Checkout />
+                </PrivateRoute>
+              }
+            />
+            <Route 
+              path="/checkout/success" 
+              element={
+                <PrivateRoute isLoggedIn={isLoggedIn}>
+                  <CheckoutSuccess />
+                </PrivateRoute>
+              }
+            />
+            <Route 
+              path="/cart"
+              element={
+                <PrivateRoute isLoggedIn={isLoggedIn}>
+                  <Cart/>
+                </PrivateRoute>
+              }
+            />
+            
+            {/* 404 Route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   );
